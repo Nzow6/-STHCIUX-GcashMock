@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { StyleSheet, View, Text, Pressable, Animated, Dimensions } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { router } from 'expo-router';
+import { Spacing } from '@/constants/theme';
 import { useFocusEffect } from '@react-navigation/native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
-import { Spacing } from '@/constants/theme';
+import { router } from 'expo-router';
+import React, { useEffect, useRef, useState } from 'react';
+import { Animated, Dimensions, Pressable, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const { width } = Dimensions.get('window');
 const SCAN_SIZE = width * 0.65;
@@ -145,15 +145,24 @@ export default function QRScreen() {
           </Pressable>
         )}
 
-        <Pressable
-          onPress={handleSimulateScan}
-          style={({ pressed }) => [styles.simulateButton, pressed && styles.pressed]}
-        >
-          <Text style={styles.simulateButtonText}>
-            Simulate QR Scan (G-Cafe Coffee)
-          </Text>
-        </Pressable>
-        
+        <View style={styles.buttonRow}>
+          <Pressable
+            onPress={handleSimulateScan}
+            style={({ pressed }) => [styles.simulateButton, pressed && styles.pressed]}
+          >
+            <Text style={styles.simulateButtonText}>
+              Simulate QR Scan
+            </Text>
+          </Pressable>
+
+          <Pressable
+            onPress={() => router.push('/my-qr')}
+            style={({ pressed }) => [styles.generateButton, pressed && styles.pressed]}
+          >
+            <Text style={styles.generateButtonText}>Generate QR</Text>
+          </Pressable>
+        </View>
+
         <Text style={styles.hintText}>
           You can test the physical camera or use the simulation bypass above.
         </Text>
@@ -306,20 +315,40 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: 'bold',
   },
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: Spacing.three,
+    width: '100%',
+    maxWidth: 320,
+  },
   simulateButton: {
     backgroundColor: '#FFFFFF',
     borderWidth: 1.5,
     borderColor: '#005CE6',
     borderRadius: 24,
     paddingVertical: Spacing.two + 2,
-    paddingHorizontal: Spacing.five,
-    width: '100%',
-    maxWidth: 280,
+    paddingHorizontal: Spacing.three,
+    flex: 1,
     alignItems: 'center',
   },
   simulateButtonText: {
     color: '#005CE6',
-    fontSize: 14,
+    fontSize: 13,
+    fontWeight: 'bold',
+  },
+  generateButton: {
+    backgroundColor: '#005CE6',
+    borderRadius: 24,
+    paddingVertical: Spacing.two + 2,
+    paddingHorizontal: Spacing.three,
+    flex: 1,
+    alignItems: 'center',
+  },
+  generateButtonText: {
+    color: '#FFFFFF',
+    fontSize: 13,
     fontWeight: 'bold',
   },
   hintText: {
