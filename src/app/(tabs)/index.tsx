@@ -8,8 +8,10 @@ import {
   Text,
   useColorScheme,
   Dimensions,
+  Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -46,6 +48,7 @@ import {
 type TabType = 'wallet' | 'save' | 'borrow' | 'invest';
 
 export default function HomeScreen() {
+  const router = useRouter();
   const scheme = useColorScheme();
   const theme = useTheme();
   
@@ -92,7 +95,11 @@ export default function HomeScreen() {
           {/* Header Section */}
           <View style={styles.headerRow}>
             <View style={styles.headerLeft}>
-              <GLogo size={36} />
+              <Image 
+                source={require('../../../assets/images/GCashLogo.png')} 
+                style={styles.headerLogoImage} 
+                resizeMode="contain"
+              />
               <ThemedText style={styles.headerHello} type="title">Hello!</ThemedText>
             </View>
             <Pressable style={({ pressed }) => [styles.helpButton, pressed && styles.pressed]}>
@@ -176,7 +183,10 @@ export default function HomeScreen() {
               </Pressable>
 
               {/* Bills */}
-              <Pressable style={({ pressed }) => [styles.gridItem, pressed && styles.pressed]}>
+              <Pressable 
+                onPress={() => router.push('/bills')}
+                style={({ pressed }) => [styles.gridItem, pressed && styles.pressed]}
+              >
                 <View style={styles.iconCircle}>
                   <BillsIcon color="#007CFF" size={28} />
                 </View>
@@ -314,9 +324,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: Spacing.two,
   },
+  headerLogoImage: {
+    width: 90,
+    height: 30,
+  },
   headerHello: {
     color: '#0A2E5C',
     fontWeight: 'bold',
+    fontSize: 24,
+    lineHeight: 30,
   },
   helpButton: {
     backgroundColor: '#E6F0FF',
