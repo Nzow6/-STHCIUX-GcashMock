@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
+import * as Linking from 'expo-linking';
+import { useRouter } from 'expo-router';
+import React, { useEffect, useState } from 'react';
 import {
-  Platform,
+  Image,
+  Modal,
   Pressable,
   ScrollView,
   StyleSheet,
-  View,
   Text,
   useColorScheme,
-  Dimensions,
-  Image,
+  View
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -19,30 +19,29 @@ import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
 import {
-  GLogo,
+  ARewardsIcon,
+  BillsIcon,
+  BorrowIcon,
+  BorrowLoadIcon,
+  CardsIcon,
+  CommuteIcon,
   EyeIcon,
   EyeOffIcon,
-  SendIcon,
-  LoadIcon,
-  TransferIcon,
-  BillsIcon,
-  GSaveIcon,
-  CardsIcon,
-  ARewardsIcon,
-  CommuteIcon,
-  GInsureIcon,
   FoodHubIcon,
-  TravelIcon,
-  NearDealsIcon,
-  GForestIcon,
-  GInvestIcon,
-  GDealsIcon,
-  GLifeIcon,
   GCashJrIcon,
-  ShopIcon,
-  BorrowLoadIcon,
-  BorrowIcon,
+  GDealsIcon,
+  GForestIcon,
+  GInsureIcon,
+  GInvestIcon,
+  GLifeIcon,
   GLoanIcon,
+  GSaveIcon,
+  LoadIcon,
+  NearDealsIcon,
+  SendIcon,
+  ShopIcon,
+  TransferIcon,
+  TravelIcon
 } from '@/components/vector-icons';
 
 type TabType = 'wallet' | 'save' | 'borrow' | 'invest';
@@ -54,6 +53,12 @@ export default function HomeScreen() {
   
   const [activeTab, setActiveTab] = useState<TabType>('wallet');
   const [balanceVisible, setBalanceVisible] = useState(true);
+  const [showAd, setShowAd] = useState(true);
+
+  useEffect(() => {
+    // The popup ad is shown only on the first mount of the dashboard.
+    // Navigating back from other screens or tabs keeps it dismissed.
+  }, []);
 
   // Tab Details Map for Wallet Card contents
   const tabDetails = {
@@ -87,6 +92,31 @@ export default function HomeScreen() {
 
   return (
     <ThemedView style={styles.container}>
+      <Modal
+        animationType="fade"
+        transparent
+        visible={showAd}
+        onRequestClose={() => setShowAd(false)}
+      >
+        <View style={styles.adOverlay}>
+          <Pressable
+            onPress={() => Linking.openURL('https://www.primevideo.com/sports')}
+            style={styles.adImageContainer}
+          >
+            <Image
+              source={require('../../../assets/images/popUpAd.jpg')}
+              style={styles.adImage}
+              resizeMode="cover"
+            />
+          </Pressable>
+          <Pressable
+            onPress={() => setShowAd(false)}
+            style={({ pressed }) => [styles.adDismissButton, pressed && styles.pressed]}
+          >
+            <Text style={styles.adDismissText}>Remind me Later</Text>
+          </Pressable>
+        </View>
+      </Modal>
       <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
         <ScrollView 
           showsVerticalScrollIndicator={false}
@@ -310,6 +340,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingBottom: BottomTabInset + Spacing.six,
+    paddingHorizontal: Spacing.three,
   },
   headerRow: {
     flexDirection: 'row',
@@ -348,12 +379,15 @@ const styles = StyleSheet.create({
   tabsRow: {
     flexDirection: 'row',
     backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#E0E1E6',
   },
   tabItem: {
     flex: 1,
     paddingVertical: Spacing.three,
     alignItems: 'center',
     borderTopWidth: 3,
+    borderTopColor: 'transparent',
     backgroundColor: '#FFFFFF',
   },
   activeTabItem: {
@@ -362,6 +396,7 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 0,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
+    borderTopColor: '#005bb5',
   },
   tabItemText: {
     fontSize: 14,
@@ -378,6 +413,8 @@ const styles = StyleSheet.create({
     padding: Spacing.four,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
+    borderWidth: 1,
+    borderColor: '#005bb5',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
@@ -421,11 +458,12 @@ const styles = StyleSheet.create({
     fontSize: 13,
   },
   gridContainer: {
-    paddingVertical: Spacing.three,
-    paddingHorizontal: Spacing.two,
+    paddingVertical: Spacing.four,
+    paddingHorizontal: Spacing.three,
     borderRadius: 16,
-    marginHorizontal: Spacing.three,
     marginTop: Spacing.three,
+    borderWidth: 1,
+    borderColor: '#E0E1E6',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
@@ -460,7 +498,11 @@ const styles = StyleSheet.create({
   },
   exploreSection: {
     marginTop: Spacing.four,
-    paddingHorizontal: Spacing.three,
+    padding: Spacing.three,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#E0E1E6',
+    backgroundColor: '#FFFFFF',
   },
   exploreHeader: {
     flexDirection: 'row',
@@ -502,7 +544,11 @@ const styles = StyleSheet.create({
   },
   promoSection: {
     marginTop: Spacing.four,
-    paddingHorizontal: Spacing.three,
+    padding: Spacing.three,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#E0E1E6',
+    backgroundColor: '#FFFFFF',
   },
   skeletonLine: {
     height: 14,
@@ -550,6 +596,34 @@ const styles = StyleSheet.create({
   },
   promoActionText: {
     color: '#54A0FF',
+    fontWeight: 'bold',
+    fontSize: 14,
+  },
+  adOverlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.65)',
+    padding: Spacing.four,
+  },
+  adImageContainer: {
+    width: '100%',
+    height: '80%',
+  },
+  adImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 16,
+  },
+  adDismissButton: {
+    marginTop: Spacing.four,
+    backgroundColor: '#FFFFFF',
+    paddingVertical: Spacing.two,
+    paddingHorizontal: Spacing.four,
+    borderRadius: Spacing.four,
+  },
+  adDismissText: {
+    color: '#007CFF',
     fontWeight: 'bold',
     fontSize: 14,
   },

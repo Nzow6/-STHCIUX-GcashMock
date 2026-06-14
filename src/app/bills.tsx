@@ -1,14 +1,14 @@
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
   Switch,
   Text,
   TextInput,
-  View,
-  Platform
+  View
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 

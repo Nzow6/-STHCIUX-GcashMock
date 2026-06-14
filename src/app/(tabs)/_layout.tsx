@@ -1,8 +1,8 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
-import { View, StyleSheet, Pressable, Platform } from 'react-native';
+import { Platform, Pressable, StyleSheet, View } from 'react-native';
 
-import { HomeIcon, InboxIcon, QrIcon, TransactionsIcon, ProfileIcon } from '@/components/vector-icons';
+import { HomeIcon, InboxIcon, ProfileIcon, QrIcon, TransactionsIcon } from '@/components/vector-icons';
 
 // Custom Tab Bar Button for the QR FAB in the center
 const QrTabBarButton = (props: any) => {
@@ -78,9 +78,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderTopWidth: 1,
     borderTopColor: '#E0E1E6',
-    height: 65,
-    paddingBottom: 8,
-    paddingTop: 8,
+    height: 85,
+    paddingBottom: 12,
+    paddingTop: 12,
     ...Platform.select({
       ios: {
         shadowColor: '#000',
