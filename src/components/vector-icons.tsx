@@ -540,4 +540,8 @@ const styles = StyleSheet.create({
   eyeLineSlash: {
     position: 'absolute',
   },
+  bracketTL: {},
+  bracketTR: {},
+  bracketBL: {},
+  bracketBR: {},
 });

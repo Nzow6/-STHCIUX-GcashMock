@@ -1,0 +1,441 @@
+import React from 'react';
+import { DEFAULT_USER, UserCredentials } from './default-user';
+
+export interface RegisteredUser {
+  mobileNumber: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  pin: string;
+}
+
+export interface Transaction {
+  id: string;
+  title: string;
+  subtitle: string;
+  amount: number;
+  type: 'send' | 'receive' | 'transfer' | 'bill';
+  date: string;
+  group: 'Today' | 'Yesterday';
+  refNumber?: string;
+}
+
+export interface InboxNotification {
+  id: string;
+  title: string;
+  body: string;
+  time: string;
+  type: 'transaction' | 'promo';
+}
+
+type Listener = () => void;
+
+class GlobalState {
+  private listeners = new Set<Listener>();
+
+  public registeredUser: RegisteredUser | null = null;
+  public activeUser: UserCredentials | null = null;
+  public isLoggedIn: boolean = false;
+  
+  // Starting balance
+  public balance: number = 500.00;
+
+  // Transactions list with generic, fake mock records
+  public transactions: Transaction[] = [
+    {
+      id: 'tx_jollibee',
+      title: 'Pay via Scanned QR',
+      subtitle: 'To Jollibee',
+      amount: -180.00,
+      type: 'send',
+      date: 'Jun 14, 2026 2:20 PM',
+      group: 'Today',
+      refNumber: '0041848659112',
+    },
+    {
+      id: 'tx_1',
+      title: 'Send Money',
+      subtitle: 'To Juan D.',
+      amount: -150.00,
+      type: 'send',
+      date: '1:50 PM',
+      group: 'Today',
+      refNumber: '0041852918501',
+    },
+    {
+      id: 'tx_2',
+      title: 'Send Money',
+      subtitle: 'From Maria L.',
+      amount: 200.00,
+      type: 'receive',
+      date: '1:07 PM',
+      group: 'Today',
+      refNumber: '0041852918502',
+    },
+    {
+      id: 'tx_3',
+      title: 'Send Money',
+      subtitle: 'To Pedro S.',
+      amount: -300.00,
+      type: 'send',
+      date: '12:34 PM',
+      group: 'Today',
+      refNumber: '0041852918503',
+    },
+    {
+      id: 'tx_4',
+      title: 'Cashin via Instapay',
+      subtitle: 'Via Online banking',
+      amount: 1000.00,
+      type: 'receive',
+      date: '11:44 AM',
+      group: 'Today',
+      refNumber: '0041852918504',
+    },
+    {
+      id: 'tx_5',
+      title: 'Pay via Scanned QR',
+      subtitle: 'To Coffee Shop',
+      amount: -120.00,
+      type: 'send',
+      date: '1:49 AM',
+      group: 'Today',
+      refNumber: '0041852918505',
+    },
+    {
+      id: 'tx_6',
+      title: 'Pay via Scanned QR',
+      subtitle: 'To Supermarket',
+      amount: -450.00,
+      type: 'send',
+      date: '1:29 AM',
+      group: 'Today',
+      refNumber: '0041852918506',
+    },
+    {
+      id: 'tx_7',
+      title: 'Send Money',
+      subtitle: 'From Alex G.',
+      amount: 80.00,
+      type: 'receive',
+      date: '11:45 AM',
+      group: 'Yesterday',
+      refNumber: '0041852918507',
+    },
+  ];
+
+  // Inbox Notifications with generic, fake mock records
+  public notifications: InboxNotification[] = [
+    {
+      id: 'notif_1',
+      title: 'Express Send Notification',
+      body: 'You have sent PHP 150.00 to Juan D. +63917***1234',
+      time: '18 minutes ago',
+      type: 'transaction',
+    },
+    {
+      id: 'notif_2',
+      title: 'SAVE MORE, WITHDRAW FR...',
+      body: 'Access your money anytime, anywhere—deposit or withdraw via GSave.',
+      time: '50 minutes ago',
+      type: 'promo',
+    },
+    {
+      id: 'notif_3',
+      title: 'Express Send Notification',
+      body: 'You have received PHP 200.00 from Maria L. +63998***5678',
+      time: '1 hour ago',
+      type: 'transaction',
+    },
+    {
+      id: 'notif_4',
+      title: 'Express Send Notification',
+      body: 'You have sent PHP 300.00 to Pedro S. +63999***1111',
+      time: '1 hour ago',
+      type: 'transaction',
+    },
+    {
+      id: 'notif_5',
+      title: 'Will GOLD drop to ₱8.5K?',
+      body: 'GOLD prices declined this week. Check GInvest for more insights.',
+      time: 'a few hours ago',
+      type: 'promo',
+    },
+    {
+      id: 'notif_6',
+      title: 'GCash Funds Received',
+      body: 'You have received 1,000.00 of GCash from Online Banking.',
+      time: 'a few hours ago',
+      type: 'transaction',
+    },
+    {
+      id: 'notif_7',
+      title: 'Successful Payment via QR',
+      body: 'You have paid P120.00 of GCash to Coffee Shop.',
+      time: 'earlier today',
+      type: 'transaction',
+    },
+  ];
+
+  getUser(mobileNumber: string): UserCredentials | null {
+    if (this.registeredUser && this.registeredUser.mobileNumber === mobileNumber) {
+      return {
+        mobileNumber: this.registeredUser.mobileNumber,
+        pin: this.registeredUser.pin,
+        firstName: this.registeredUser.firstName,
+        lastName: this.registeredUser.lastName,
+        email: this.registeredUser.email,
+        balance: this.balance,
+      };
+    }
+    if (DEFAULT_USER.mobileNumber === mobileNumber) {
+      return {
+        ...DEFAULT_USER,
+        balance: this.balance,
+      };
+    }
+    return null;
+  }
+
+  subscribe(listener: Listener) {
+    this.listeners.add(listener);
+    return () => {
+      this.listeners.delete(listener);
+    };
+  }
+
+  notify() {
+    this.listeners.forEach((l) => l());
+  }
+
+  setRegisteredUser(user: RegisteredUser | null) {
+    this.registeredUser = user;
+    if (user) {
+      this.activeUser = {
+        mobileNumber: user.mobileNumber,
+        pin: user.pin,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        balance: this.balance,
+      };
+    } else {
+      this.activeUser = null;
+    }
+    this.notify();
+  }
+
+  setActiveUser(user: UserCredentials | null) {
+    this.activeUser = user;
+    this.notify();
+  }
+
+  setLoggedIn(status: boolean) {
+    this.isLoggedIn = status;
+    this.notify();
+  }
+
+  setBalance(amount: number) {
+    this.balance = amount;
+    if (this.activeUser) {
+      this.activeUser.balance = amount;
+    }
+    this.notify();
+  }
+
+  addTransaction(tx: Omit<Transaction, 'id' | 'date' | 'group' | 'refNumber'> & { refNumber?: string }) {
+    const timeString = new Date().toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+    });
+    const newTx: Transaction = {
+      ...tx,
+      id: `tx_${Date.now()}`,
+      date: timeString,
+      group: 'Today',
+      refNumber: tx.refNumber || `0041${Math.floor(100000000 + Math.random() * 900000000).toString()}`,
+    };
+    this.transactions = [newTx, ...this.transactions];
+    this.notify();
+  }
+
+  addNotification(notif: Omit<InboxNotification, 'id' | 'time'>) {
+    const newNotif: InboxNotification = {
+      ...notif,
+      id: `notif_${Date.now()}`,
+      time: 'Just now',
+    };
+    this.notifications = [newNotif, ...this.notifications];
+    this.notify();
+  }
+
+  reset() {
+    this.registeredUser = null;
+    this.activeUser = null;
+    this.isLoggedIn = false;
+    this.balance = 500.00;
+    this.transactions = [
+      {
+        id: 'tx_jollibee',
+        title: 'Pay via Scanned QR',
+        subtitle: 'To Jollibee',
+        amount: -180.00,
+        type: 'send',
+        date: 'Jun 14, 2026 2:20 PM',
+        group: 'Today',
+        refNumber: '0041848659112',
+      },
+      {
+        id: 'tx_1',
+        title: 'Send Money',
+        subtitle: 'To Juan D.',
+        amount: -150.00,
+        type: 'send',
+        date: '1:50 PM',
+        group: 'Today',
+        refNumber: '0041852918501',
+      },
+      {
+        id: 'tx_2',
+        title: 'Send Money',
+        subtitle: 'From Maria L.',
+        amount: 200.00,
+        type: 'receive',
+        date: '1:07 PM',
+        group: 'Today',
+        refNumber: '0041852918502',
+      },
+      {
+        id: 'tx_3',
+        title: 'Send Money',
+        subtitle: 'To Pedro S.',
+        amount: -300.00,
+        type: 'send',
+        date: '12:34 PM',
+        group: 'Today',
+        refNumber: '0041852918503',
+      },
+      {
+        id: 'tx_4',
+        title: 'Cashin via Instapay',
+        subtitle: 'Via Online banking',
+        amount: 1000.00,
+        type: 'receive',
+        date: '11:44 AM',
+        group: 'Today',
+        refNumber: '0041852918504',
+      },
+      {
+        id: 'tx_5',
+        title: 'Pay via Scanned QR',
+        subtitle: 'To Coffee Shop',
+        amount: -120.00,
+        type: 'send',
+        date: '1:49 AM',
+        group: 'Today',
+        refNumber: '0041852918505',
+      },
+      {
+        id: 'tx_6',
+        title: 'Pay via Scanned QR',
+        subtitle: 'To Supermarket',
+        amount: -450.00,
+        type: 'send',
+        date: '1:29 AM',
+        group: 'Today',
+        refNumber: '0041852918506',
+      },
+      {
+        id: 'tx_7',
+        title: 'Send Money',
+        subtitle: 'From Alex G.',
+        amount: 80.00,
+        type: 'receive',
+        date: '11:45 AM',
+        group: 'Yesterday',
+        refNumber: '0041852918507',
+      },
+    ];
+    this.notifications = [
+      {
+        id: 'notif_1',
+        title: 'Express Send Notification',
+        body: 'You have sent PHP 150.00 to Juan D. +63917***1234',
+        time: '18 minutes ago',
+        type: 'transaction',
+      },
+      {
+        id: 'notif_2',
+        title: 'SAVE MORE, WITHDRAW FR...',
+        body: 'Access your money anytime, anywhere—deposit or withdraw via GSave.',
+        time: '50 minutes ago',
+        type: 'promo',
+      },
+      {
+        id: 'notif_3',
+        title: 'Express Send Notification',
+        body: 'You have received PHP 200.00 from Maria L. +63998***5678',
+        time: '1 hour ago',
+        type: 'transaction',
+      },
+      {
+        id: 'notif_4',
+        title: 'Express Send Notification',
+        body: 'You have sent PHP 300.00 to Pedro S. +63999***1111',
+        time: '1 hour ago',
+        type: 'transaction',
+      },
+      {
+        id: 'notif_5',
+        title: 'Will GOLD drop to ₱8.5K?',
+        body: 'GOLD prices declined this week. Check GInvest for more insights.',
+        time: 'a few hours ago',
+        type: 'promo',
+      },
+      {
+        id: 'notif_6',
+        title: 'GCash Funds Received',
+        body: 'You have received 1,000.00 of GCash from Online Banking.',
+        time: 'a few hours ago',
+        type: 'transaction',
+      },
+      {
+        id: 'notif_7',
+        title: 'Successful Payment via QR',
+        body: 'You have paid P120.00 of GCash to Coffee Shop.',
+        time: 'earlier today',
+        type: 'transaction',
+      },
+    ];
+    this.notify();
+  }
+}
+
+export const globalState = new GlobalState();
+
+export function useGlobalState() {
+  const [state, setState] = React.useState({
+    registeredUser: globalState.registeredUser,
+    activeUser: globalState.activeUser,
+    isLoggedIn: globalState.isLoggedIn,
+    balance: globalState.balance,
+    transactions: globalState.transactions,
+    notifications: globalState.notifications,
+  });
+
+  React.useEffect(() => {
+    return globalState.subscribe(() => {
+      setState({
+        registeredUser: globalState.registeredUser,
+        activeUser: globalState.activeUser,
+        isLoggedIn: globalState.isLoggedIn,
+        balance: globalState.balance,
+        transactions: globalState.transactions,
+        notifications: globalState.notifications,
+      });
+    });
+  }, []);
+
+  return state;
+}

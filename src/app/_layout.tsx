@@ -14,10 +14,26 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="bills" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="index" />
+        <Stack.Screen name="otp" />
+        <Stack.Screen name="register" />
+        <Stack.Screen name="pin-setup" />
+        <Stack.Screen name="register-success" />
+        <Stack.Screen name="login-pin" />
+        <Stack.Screen name="send" />
+        <Stack.Screen name="express-send" />
+        <Stack.Screen name="send-confirm" />
+        <Stack.Screen name="send-success" />
+        <Stack.Screen name="transaction-details" />
+        <Stack.Screen name="bank-transfer" />
+        <Stack.Screen name="bank-select" />
+        <Stack.Screen name="bank-pay" />
+        <Stack.Screen name="bank-confirm" />
+        <Stack.Screen name="bank-success" />
+        <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="bills" />
+        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal', headerShown: true }} />
       </Stack>
       <StatusBar style="dark" />
     </ThemeProvider>

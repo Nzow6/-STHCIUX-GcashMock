@@ -17,6 +17,8 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { useGlobalState } from '@/constants/state';
+import { router } from 'expo-router';
 
 import {
   ARewardsIcon,
@@ -50,6 +52,7 @@ export default function HomeScreen() {
   const router = useRouter();
   const scheme = useColorScheme();
   const theme = useTheme();
+  const { activeUser, balance } = useGlobalState();
   
   const [activeTab, setActiveTab] = useState<TabType>('wallet');
   const [balanceVisible, setBalanceVisible] = useState(true);
@@ -64,7 +67,7 @@ export default function HomeScreen() {
   const tabDetails = {
     wallet: {
       label: 'AVAILABLE BALANCE',
-      value: '₱ 539.02',
+      value: `₱ ${balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
       hiddenValue: '₱ ••••••',
       buttonText: '+ Cash In',
     },
@@ -89,6 +92,7 @@ export default function HomeScreen() {
   };
 
   const currentDetails = tabDetails[activeTab];
+  const greetingName = activeUser ? activeUser.firstName : 'User';
 
   return (
     <ThemedView style={styles.container}>
@@ -130,7 +134,7 @@ export default function HomeScreen() {
                 style={styles.headerLogoImage} 
                 resizeMode="contain"
               />
-              <ThemedText style={styles.headerHello} type="title">Hello!</ThemedText>
+              <ThemedText style={styles.headerHello} type="title">Hello, {greetingName}!</ThemedText>
             </View>
             <Pressable style={({ pressed }) => [styles.helpButton, pressed && styles.pressed]}>
               <Text style={styles.helpButtonText}>HELP</Text>
@@ -189,7 +193,10 @@ export default function HomeScreen() {
           <View style={[styles.gridContainer, { backgroundColor: theme.background }]}>
             <View style={styles.gridRow}>
               {/* Send */}
-              <Pressable style={({ pressed }) => [styles.gridItem, pressed && styles.pressed]}>
+              <Pressable
+                onPress={() => router.push('/send')}
+                style={({ pressed }) => [styles.gridItem, pressed && styles.pressed]}
+              >
                 <View style={styles.iconCircle}>
                   <SendIcon color="#007CFF" size={28} />
                 </View>
@@ -205,7 +212,10 @@ export default function HomeScreen() {
               </Pressable>
 
               {/* Transfer */}
-              <Pressable style={({ pressed }) => [styles.gridItem, pressed && styles.pressed]}>
+              <Pressable
+                onPress={() => router.push('/bank-transfer')}
+                style={({ pressed }) => [styles.gridItem, pressed && styles.pressed]}
+              >
                 <View style={styles.iconCircle}>
                   <TransferIcon color="#007CFF" size={28} />
                 </View>
