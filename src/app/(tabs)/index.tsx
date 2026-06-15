@@ -15,10 +15,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { useGlobalState } from '@/constants/state';
 import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
-import { useGlobalState } from '@/constants/state';
-import { router } from 'expo-router';
 
 import {
   ARewardsIcon,
@@ -354,8 +353,7 @@ const styles = StyleSheet.create({
   },
   headerRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    justifyContent: 'flex-start',
     paddingHorizontal: Spacing.four,
     paddingVertical: Spacing.four,
     backgroundColor: '#FFFFFF',

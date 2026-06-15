@@ -7,6 +7,8 @@ export interface RegisteredUser {
   lastName: string;
   email: string;
   pin: string;
+  birthdate?: string;
+  address?: string;
 }
 
 export interface Transaction {
@@ -185,6 +187,8 @@ class GlobalState {
         firstName: this.registeredUser.firstName,
         lastName: this.registeredUser.lastName,
         email: this.registeredUser.email,
+        birthdate: this.registeredUser.birthdate || DEFAULT_USER.birthdate,
+        address: this.registeredUser.address || DEFAULT_USER.address,
         balance: this.balance,
       };
     }
@@ -217,6 +221,8 @@ class GlobalState {
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
+        birthdate: user.birthdate || DEFAULT_USER.birthdate,
+        address: user.address || DEFAULT_USER.address,
         balance: this.balance,
       };
     } else {
@@ -227,6 +233,31 @@ class GlobalState {
 
   setActiveUser(user: UserCredentials | null) {
     this.activeUser = user;
+    this.notify();
+  }
+
+  updateEmail(email: string) {
+    if (this.registeredUser) {
+      this.registeredUser.email = email;
+    }
+    if (this.activeUser) {
+      this.activeUser.email = email;
+    }
+    this.notify();
+  }
+
+  updatePin(pin: string) {
+    if (this.registeredUser) {
+      this.registeredUser.pin = pin;
+    }
+    if (this.activeUser) {
+      this.activeUser.pin = pin;
+    }
+    // Keep the default user's PIN in sync so the change persists
+    // across sessions when no registered user exists.
+    if (DEFAULT_USER) {
+      DEFAULT_USER.pin = pin;
+    }
     this.notify();
   }
 
