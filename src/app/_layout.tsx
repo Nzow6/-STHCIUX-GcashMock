@@ -40,6 +40,8 @@ export default function RootLayout() {
         <Stack.Screen name="edit-email" />
         <Stack.Screen name="success" />
         <Stack.Screen name="settings" />
+        <Stack.Screen name="account-secure" />
+        <Stack.Screen name="account-secure-confirm" />
         <Stack.Screen name="change-mpin-current" />
         <Stack.Screen name="change-mpin-new" />
         <Stack.Screen name="change-mpin-success" />

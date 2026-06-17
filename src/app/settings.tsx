@@ -2,11 +2,11 @@ import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React from 'react';
 import {
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -97,6 +97,7 @@ export default function SettingsScreen() {
           <SettingsRow
             icon={<Ionicons name="link-outline" size={24} color="#007CFF" />}
             title="Linked Devices"
+            onPress={() => router.push('/account-secure')}
           />
           <SettingsRow
             icon={<Ionicons name="shield-half-outline" size={24} color="#007CFF" />}

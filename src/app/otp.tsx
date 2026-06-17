@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, Pressable, Animated } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { router, useLocalSearchParams } from 'expo-router';
 import { NumericKeypad } from '@/components/numeric-keypad';
+import { globalState } from '@/constants/state';
 import { Spacing } from '@/constants/theme';
+import { router, useLocalSearchParams } from 'expo-router';
+import React, { useEffect, useState } from 'react';
+import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function OTPScreen() {
-  const { phone } = useLocalSearchParams<{ phone: string }>();
+  const { phone, source } = useLocalSearchParams<{ phone: string; source?: string }>();
   const [code, setCode] = useState('');
   const [otpCode, setOtpCode] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -48,13 +49,7 @@ export default function OTPScreen() {
       // Auto-submit when 6 digits are typed
       if (newCode.length === 6) {
         if (newCode === otpCode) {
-          // Proceed to Registration Details form
-          setTimeout(() => {
-            router.push({
-              pathname: '/register',
-              params: { phone },
-            });
-          }, 300);
+          handleSuccess();
         } else {
           setError('Incorrect authentication code. Please try again.');
         }
@@ -138,15 +133,33 @@ export default function OTPScreen() {
     return `+63 ${raw.slice(0, 3)} ${raw.slice(3, 6)} ${raw.slice(6)}`;
   };
 
-  const handleAutofill = () => {
-    setCode(otpCode);
-    setError(null);
+  const handleSuccess = () => {
+    if (source === 'unregister-device') {
+      // Unregister the current device and clear the session
+      globalState.setLoggedIn(false);
+      globalState.setActiveUser(null);
+
+      // Clear navigation stack and send user back to the Login screen
+      if (router.canGoBack()) {
+        router.dismissAll();
+      }
+      router.replace('/');
+      return;
+    }
+
+    // Default registration flow
     setTimeout(() => {
       router.push({
         pathname: '/register',
         params: { phone },
       });
-    }, 500);
+    }, 300);
+  };
+
+  const handleAutofill = () => {
+    setCode(otpCode);
+    setError(null);
+    handleSuccess();
   };
 
   return (

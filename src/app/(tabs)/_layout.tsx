@@ -1,8 +1,9 @@
+import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 import React from 'react';
 import { Platform, Pressable, StyleSheet, View } from 'react-native';
 
-import { HomeIcon, InboxIcon, ProfileIcon, QrIcon, TransactionsIcon } from '@/components/vector-icons';
+import { HomeIcon, InboxIcon, ProfileIcon, TransactionsIcon } from '@/components/vector-icons';
 
 // Custom Tab Bar Button for the QR FAB in the center
 const QrTabBarButton = (props: any) => {
@@ -15,9 +16,9 @@ const QrTabBarButton = (props: any) => {
       ]}
     >
       <View style={styles.qrCircleOuter}>
-        <View style={styles.qrCircleInner}>
-          <QrIcon color="#007CFF" size={24} />
-        </View>
+          <View style={styles.qrCircleInner}>
+            <Ionicons name="qr-code" size={24} color="#007CFF" />
+          </View>
       </View>
     </Pressable>
   );

@@ -3,11 +3,14 @@ import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
   Image,
+  LayoutAnimation,
   Modal,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
   Text,
+  UIManager,
   useColorScheme,
   View
 } from 'react-native';
@@ -56,6 +59,7 @@ export default function HomeScreen() {
   const [activeTab, setActiveTab] = useState<TabType>('wallet');
   const [balanceVisible, setBalanceVisible] = useState(true);
   const [showAd, setShowAd] = useState(true);
+  const [exploreExpanded, setExploreExpanded] = useState(false);
 
   useEffect(() => {
     // The popup ad is shown only on the first mount of the dashboard.
@@ -93,6 +97,33 @@ export default function HomeScreen() {
   const currentDetails = tabDetails[activeTab];
   const greetingName = activeUser ? activeUser.firstName : 'User';
 
+  const toggleExplore = () => {
+    if (
+      Platform.OS === 'android' &&
+      UIManager.setLayoutAnimationEnabledExperimental
+    ) {
+      UIManager.setLayoutAnimationEnabledExperimental(true);
+    }
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setExploreExpanded((prev) => !prev);
+  };
+
+  const exploreItems = [
+    { name: 'GInsure', icon: <GInsureIcon color="#007CFF" size={28} />, route: '/ginsure' },
+    { name: 'Food Hub', icon: <FoodHubIcon size={28} />, route: '/food-hub' },
+    { name: 'Travel', icon: <TravelIcon size={28} />, route: '/travel' },
+    { name: 'Near Deals', icon: <NearDealsIcon size={28} /> },
+    { name: 'GForest', icon: <GForestIcon size={28} /> },
+    { name: 'GInvest', icon: <GInvestIcon size={28} /> },
+    { name: 'GDeals', icon: <GDealsIcon size={28} /> },
+    { name: 'GLife', icon: <GLifeIcon size={28} /> },
+    { name: 'GCash Jr.', icon: <GCashJrIcon size={28} /> },
+    { name: 'Shop', icon: <ShopIcon size={28} /> },
+    { name: 'Borrow load', icon: <BorrowLoadIcon size={28} /> },
+    { name: 'Borrow', icon: <BorrowIcon size={28} /> },
+    { name: 'GLoan', icon: <GLoanIcon size={28} /> },
+  ];
+
   return (
     <ThemedView style={styles.container}>
       <Modal
@@ -126,19 +157,22 @@ export default function HomeScreen() {
           contentContainerStyle={styles.scrollContent}
         >
           {/* Header Section */}
-          <View style={styles.headerRow}>
-            <View style={styles.headerLeft}>
-              <Image 
-                source={require('../../../assets/images/GCashLogo.png')} 
-                style={styles.headerLogoImage} 
-                resizeMode="contain"
-              />
-              <ThemedText style={styles.headerHello} type="title">Hello, {greetingName}!</ThemedText>
-            </View>
-            <Pressable style={({ pressed }) => [styles.helpButton, pressed && styles.pressed]}>
-              <Text style={styles.helpButtonText}>HELP</Text>
-            </Pressable>
+        <View style={styles.headerRow}>
+          <View style={styles.headerLeft}>
+            <Image 
+              source={require('../../../assets/images/GCashLogo.png')} 
+              style={styles.headerLogoImage} 
+              resizeMode="contain"
+            />
+            <ThemedText style={styles.headerHello} type="title">
+              Hello, {greetingName}!
+            </ThemedText>
           </View>
+          
+          <Pressable style={({ pressed }) => [styles.helpButton, pressed && styles.pressed]}>
+            <Text style={styles.helpButtonText}>HELP</Text>
+          </Pressable>
+        </View>
 
           {/* Navigation Tabs (Wallet, Save, Borrow, Invest) */}
           <View style={styles.tabsRow}>
@@ -203,7 +237,10 @@ export default function HomeScreen() {
               </Pressable>
 
               {/* Load */}
-              <Pressable style={({ pressed }) => [styles.gridItem, pressed && styles.pressed]}>
+              <Pressable
+                onPress={() => router.push('/load')}
+                style={({ pressed }) => [styles.gridItem, pressed && styles.pressed]}
+              >
                 <View style={styles.iconCircle}>
                   <LoadIcon color="#007CFF" size={28} />
                 </View>
@@ -235,7 +272,10 @@ export default function HomeScreen() {
 
             <View style={styles.gridRow}>
               {/* GSave */}
-              <Pressable style={({ pressed }) => [styles.gridItem, pressed && styles.pressed]}>
+              <Pressable
+                onPress={() => router.push('/gsave')}
+                style={({ pressed }) => [styles.gridItem, pressed && styles.pressed]}
+              >
                 <View style={styles.iconCircle}>
                   <GSaveIcon color="#007CFF" size={28} />
                 </View>
@@ -243,7 +283,10 @@ export default function HomeScreen() {
               </Pressable>
 
               {/* Cards */}
-              <Pressable style={({ pressed }) => [styles.gridItem, pressed && styles.pressed]}>
+              <Pressable
+                onPress={() => router.push('/cards')}
+                style={({ pressed }) => [styles.gridItem, pressed && styles.pressed]}
+              >
                 <View style={styles.iconCircle}>
                   <CardsIcon color="#007CFF" size={28} />
                 </View>
@@ -251,7 +294,10 @@ export default function HomeScreen() {
               </Pressable>
 
               {/* A+ Rewards */}
-              <Pressable style={({ pressed }) => [styles.gridItem, pressed && styles.pressed]}>
+              <Pressable
+                onPress={() => router.push('/a-rewards')}
+                style={({ pressed }) => [styles.gridItem, pressed && styles.pressed]}
+              >
                 <View style={styles.iconCircle}>
                   <ARewardsIcon color="#007CFF" size={28} />
                 </View>
@@ -353,15 +399,20 @@ const styles = StyleSheet.create({
   },
   headerRow: {
     flexDirection: 'row',
-    justifyContent: 'flex-start',
+    justifyContent: 'space-between', // Pushes headerLeft to the far left, helpButton to the far right
+    alignItems: 'center',
     paddingHorizontal: Spacing.four,
     paddingVertical: Spacing.four,
     backgroundColor: '#FFFFFF',
   },
   headerLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.two,
+    flexDirection: 'row',  // Aligns the Logo and the Hello text side-by-side
+    alignItems: 'center',  // Centers the logo and text vertically together
+    gap: Spacing.two,      // Adds a clean gap between the image and the text
+  },
+  helpButton: {
+    marginLeft: 'auto',         // Magic trick: pushes the HELP button to the far right
+    // ... your other existing helpButton styles
   },
   headerLogoImage: {
     width: 90,
@@ -372,12 +423,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 24,
     lineHeight: 30,
-  },
-  helpButton: {
-    backgroundColor: '#E6F0FF',
-    paddingVertical: Spacing.one,
-    paddingHorizontal: Spacing.three,
-    borderRadius: Spacing.four,
   },
   helpButtonText: {
     color: '#007CFF',
