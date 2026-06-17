@@ -95,7 +95,7 @@ export default function AccountSecureScreen() {
               <View style={styles.currentPill}>
                 <Text style={styles.currentPillText}>Current Phone</Text>
               </View>
-              <Text style={styles.deviceName}>iPhone 17</Text>
+              <Text style={styles.deviceName}>This Phone</Text>
             </View>
 
             <Ionicons
