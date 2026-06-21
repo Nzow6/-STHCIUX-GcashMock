@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, Pressable, Platform } from 'react-native';
+import { StyleSheet, View, Text, Pressable, Platform, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-import { GLogo } from '@/components/vector-icons';
 import { NumericKeypad } from '@/components/numeric-keypad';
 import { Spacing } from '@/constants/theme';
 import { globalState } from '@/constants/state';
@@ -81,8 +80,11 @@ export default function WelcomeScreen() {
       <View style={styles.content}>
         {/* Branding header */}
         <View style={styles.header}>
-          <GLogo size={48} />
-          <Text style={styles.brandText}>GCash</Text>
+          <Image 
+            source={require('../../assets/images/GCashLogo.png')} 
+            style={styles.logoImage} 
+            resizeMode="contain" 
+          />
         </View>
 
         {/* Input container card */}
@@ -142,15 +144,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: Spacing.two,
     marginTop: Spacing.four,
     marginBottom: Spacing.two,
   },
-  brandText: {
-    fontSize: 36,
-    fontWeight: '900',
-    color: '#007CFF',
-    fontStyle: 'italic',
+  logoImage: {
+    height: 48,
+    width: 200,
   },
   inputCard: {
     backgroundColor: '#FFFFFF',

@@ -832,7 +832,7 @@ export default function PayBillsFlow() {
             <View style={[styles.blueHeader, { backgroundColor: '#007CFF' }]}>
               <View style={{ width: 40 }} />
               <Text style={[styles.headerTitle, { color: '#FFFFFF' }]}>GBills</Text>
-              <Pressable onPress={() => router.replace('/')} style={styles.backButton}>
+              <Pressable onPress={() => router.replace('/(tabs)')} style={styles.backButton}>
                 <Text style={[styles.backIcon, { color: '#FFFFFF' }]}>✕</Text>
               </Pressable>
             </View>

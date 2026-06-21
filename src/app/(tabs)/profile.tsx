@@ -53,17 +53,17 @@ export default function ProfileScreen() {
   };
 
   const menuItems = [
-    { id: '1', title: 'Profile Limits', icon: <Ionicons name="wallet-outline" size={24} color="#007CFF" /> },
-    { id: '2', title: 'My Linked Payments', icon: <Ionicons name="card-outline" size={24} color="#007CFF" /> },
-    { id: '3', title: 'My Linked Accounts', icon: <MaterialCommunityIcons name="sync" size={24} color="#007CFF" /> },
-    { id: '4', title: 'My QR Codes', icon: <Ionicons name="qr-code-outline" size={24} color="#007CFF" /> },
+    { id: '1', title: 'Profile Limits', icon: <Ionicons name="wallet-outline" size={24} color="#007CFF" />, onPress: () => router.push('/profile-limits') },
+    { id: '2', title: 'My Linked Payments', icon: <Ionicons name="card-outline" size={24} color="#007CFF" />, onPress: () => router.push('/cards') },
+    { id: '3', title: 'My Linked Accounts', icon: <MaterialCommunityIcons name="sync" size={24} color="#007CFF" />, onPress: () => router.push('/linked-accounts') },
+    { id: '4', title: 'My QR Codes', icon: <Ionicons name="qr-code-outline" size={24} color="#007CFF" />, onPress: () => router.push('/my-qr') },
     { id: '5', title: 'Settings', icon: <Ionicons name="settings-outline" size={24} color="#007CFF" />, onPress: handleNavigateToSettings },
-    { id: '6', title: 'GScore', icon: <Ionicons name="speedometer-outline" size={24} color="#007CFF" /> },
-    { id: '7', title: 'Terms and Conditions', icon: <Ionicons name="document-text-outline" size={24} color="#007CFF" /> },
-    { id: '8', title: 'Privacy Choices', icon: <Ionicons name="shield-checkmark-outline" size={24} color="#007CFF" /> },
-    { id: '9', title: 'Alipay+', icon: <MaterialCommunityIcons name="plus" size={24} color="#007CFF" /> },
-    { id: '10', title: 'Voucher Pocket', icon: <Ionicons name="mail-open-outline" size={24} color="#007CFF" /> },
-    { id: '11', title: 'Promos', icon: <Ionicons name="ticket-outline" size={24} color="#007CFF" /> },
+    { id: '6', title: 'GScore', icon: <Ionicons name="speedometer-outline" size={24} color="#007CFF" />, onPress: () => router.push('/gscore') },
+    { id: '7', title: 'Terms and Conditions', icon: <Ionicons name="document-text-outline" size={24} color="#007CFF" />, onPress: () => router.push('/terms-conditions') },
+    { id: '8', title: 'Privacy Choices', icon: <Ionicons name="shield-checkmark-outline" size={24} color="#007CFF" />, onPress: () => router.push('/privacy-choices') },
+    { id: '9', title: 'Alipay+', icon: <MaterialCommunityIcons name="plus" size={24} color="#007CFF" />, onPress: () => router.push('/a-rewards') },
+    { id: '10', title: 'Voucher Pocket', icon: <Ionicons name="mail-open-outline" size={24} color="#007CFF" />, onPress: () => router.push('/voucher-pocket') },
+    { id: '11', title: 'Promos', icon: <Ionicons name="ticket-outline" size={24} color="#007CFF" />, onPress: () => router.push('/promos') },
   ];
 
   return (
@@ -100,7 +100,10 @@ export default function ProfileScreen() {
         </View>
 
         {/* Clickable View Benefits Button */}
-        <Pressable style={({ pressed }) => [styles.viewBenefitsButton, pressed && styles.pressed]}>
+        <Pressable 
+          style={({ pressed }) => [styles.viewBenefitsButton, pressed && styles.pressed]}
+          onPress={() => router.push('/benefits')}
+        >
           <Text style={styles.viewBenefitsText}>View Benefits</Text>
         </Pressable>
       </View>

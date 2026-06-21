@@ -45,6 +45,14 @@ export default function RootLayout() {
         <Stack.Screen name="change-mpin-current" />
         <Stack.Screen name="change-mpin-new" />
         <Stack.Screen name="change-mpin-success" />
+        <Stack.Screen name="profile-limits" />
+        <Stack.Screen name="linked-accounts" />
+        <Stack.Screen name="gscore" />
+        <Stack.Screen name="terms-conditions" />
+        <Stack.Screen name="privacy-choices" />
+        <Stack.Screen name="voucher-pocket" />
+        <Stack.Screen name="promos" />
+        <Stack.Screen name="benefits" />
         <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal', headerShown: true }} />
       </Stack>
       <StatusBar style="dark" />
