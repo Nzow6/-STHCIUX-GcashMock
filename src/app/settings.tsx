@@ -82,7 +82,7 @@ export default function SettingsScreen() {
     const performLogout = () => {
       globalState.setActiveUser(null);
       globalState.setLoggedIn(false);
-      router.replace('/');
+      router.replace('/welcome');
     };
 
     if (Platform.OS === 'web') {

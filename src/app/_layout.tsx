@@ -1,9 +1,11 @@
 import { DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
+import { Stack, useRouter, useSegments, useRootNavigationState } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import React, { useEffect, useState } from 'react';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useGlobalState } from '@/constants/state';
 
 export const unstable_settings = {
   anchor: '(tabs)',
@@ -11,11 +13,30 @@ export const unstable_settings = {
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+  const { isLoggedIn } = useGlobalState();
+  const segments = useSegments();
+  const navigationState = useRootNavigationState();
+  const router = useRouter();
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isMounted || !navigationState?.key) return;
+
+    const inTabs = segments[0] === '(tabs)';
+    if (!isLoggedIn && inTabs) {
+      router.replace('/welcome');
+    }
+  }, [isMounted, isLoggedIn, segments, navigationState?.key, router]);
 
   return (
     <ThemeProvider value={DefaultTheme}>
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="index" />
+        <Stack.Screen name="welcome" />
         <Stack.Screen name="otp" />
         <Stack.Screen name="register" />
         <Stack.Screen name="pin-setup" />

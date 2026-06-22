@@ -143,7 +143,7 @@ export default function OTPScreen() {
       if (router.canGoBack()) {
         router.dismissAll();
       }
-      router.replace('/');
+      router.replace('/welcome');
       return;
     }
 

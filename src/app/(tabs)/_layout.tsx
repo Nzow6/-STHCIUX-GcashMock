@@ -25,6 +25,7 @@ const QrTabBarButton = (props: any) => {
 };
 
 export default function TabLayout() {
+
   return (
     <Tabs
       screenOptions={{
