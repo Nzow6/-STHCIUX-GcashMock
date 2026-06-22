@@ -2,7 +2,9 @@ import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React from 'react';
 import {
+  Alert,
   FlatList,
+  Platform,
   Pressable,
   StyleSheet,
   Text,
@@ -12,7 +14,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { DEFAULT_USER } from '@/constants/default-user';
-import { useGlobalState } from '@/constants/state';
+import { globalState, useGlobalState } from '@/constants/state';
 import { Spacing } from '@/constants/theme';
 
 interface MenuItemProps {
@@ -52,9 +54,34 @@ export default function ProfileScreen() {
     router.push('/settings');
   };
 
+  const handleLogout = () => {
+    const performLogout = () => {
+      globalState.setActiveUser(null);
+      globalState.setLoggedIn(false);
+      router.replace('/');
+    };
+
+    if (Platform.OS === 'web') {
+      const confirmLogout = window.confirm('Are you sure you want to log out?');
+      if (confirmLogout) {
+        performLogout();
+      }
+    } else {
+      Alert.alert(
+        'Log Out',
+        'Are you sure you want to log out of GCash?',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          { text: 'Log Out', onPress: performLogout, style: 'destructive' },
+        ],
+        { cancelable: true }
+      );
+    }
+  };
+
   const menuItems = [
     { id: '1', title: 'Profile Limits', icon: <Ionicons name="wallet-outline" size={24} color="#007CFF" />, onPress: () => router.push('/profile-limits') },
-    { id: '2', title: 'My Linked Payments', icon: <Ionicons name="card-outline" size={24} color="#007CFF" />, onPress: () => router.push('/cards') },
+    { id: '2', title: 'My Subscriptions', icon: <Ionicons name="card-outline" size={24} color="#007CFF" />, onPress: () => router.push('/cards') },
     { id: '3', title: 'My Linked Accounts', icon: <MaterialCommunityIcons name="sync" size={24} color="#007CFF" />, onPress: () => router.push('/linked-accounts') },
     { id: '4', title: 'My QR Codes', icon: <Ionicons name="qr-code-outline" size={24} color="#007CFF" />, onPress: () => router.push('/my-qr') },
     { id: '5', title: 'Settings', icon: <Ionicons name="settings-outline" size={24} color="#007CFF" />, onPress: handleNavigateToSettings },
@@ -64,6 +91,7 @@ export default function ProfileScreen() {
     { id: '9', title: 'Alipay+', icon: <MaterialCommunityIcons name="plus" size={24} color="#007CFF" />, onPress: () => router.push('/a-rewards') },
     { id: '10', title: 'Voucher Pocket', icon: <Ionicons name="mail-open-outline" size={24} color="#007CFF" />, onPress: () => router.push('/voucher-pocket') },
     { id: '11', title: 'Promos', icon: <Ionicons name="ticket-outline" size={24} color="#007CFF" />, onPress: () => router.push('/promos') },
+    { id: '12', title: 'Help', icon: <Ionicons name="help-circle-outline" size={24} color="#007CFF" /> },
   ];
 
   return (
@@ -117,6 +145,22 @@ export default function ProfileScreen() {
         )}
         contentContainerStyle={styles.menuList}
         showsVerticalScrollIndicator={false}
+        ListFooterComponent={
+          <View style={styles.footerContainer}>
+            <View style={styles.footerDivider} />
+            <TouchableOpacity 
+              style={styles.menuItem}
+              onPress={handleLogout} 
+              activeOpacity={0.6}
+            >
+              <View style={styles.menuIcon}>
+                <Ionicons name="log-out-outline" size={24} color="#007CFF" />
+              </View>
+              <Text style={styles.menuTitle}>Log out</Text>
+              <Ionicons name="chevron-forward" size={20} color="#C7C7CC" />
+            </TouchableOpacity>
+          </View>
+        }
       />
     </SafeAreaView>
   );
@@ -220,5 +264,13 @@ const styles = StyleSheet.create({
   },
   pressed: {
     opacity: 0.8,
+  },
+  footerContainer: {
+    paddingBottom: Spacing.six,
+  },
+  footerDivider: {
+    height: 1,
+    backgroundColor: '#EFEFEF',
+    marginVertical: Spacing.two,
   },
 });

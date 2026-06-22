@@ -2,6 +2,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React from 'react';
 import {
+  Alert,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -10,6 +12,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { globalState } from '@/constants/state';
 import { Spacing } from '@/constants/theme';
 
 interface BadgeProps {
@@ -75,6 +78,31 @@ export default function SettingsScreen() {
     router.push('/change-mpin-current');
   };
 
+  const handleLogout = () => {
+    const performLogout = () => {
+      globalState.setActiveUser(null);
+      globalState.setLoggedIn(false);
+      router.replace('/');
+    };
+
+    if (Platform.OS === 'web') {
+      const confirmLogout = window.confirm('Are you sure you want to log out?');
+      if (confirmLogout) {
+        performLogout();
+      }
+    } else {
+      Alert.alert(
+        'Log Out',
+        'Are you sure you want to log out of GCash?',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          { text: 'Log Out', onPress: performLogout, style: 'destructive' },
+        ],
+        { cancelable: true }
+      );
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container} edges={['top', 'left', 'right', 'bottom']}>
       {/* Header */}
@@ -133,6 +161,18 @@ export default function SettingsScreen() {
             isLast
           />
         </SettingsSection>
+
+        {/* Log Out Button */}
+        <Pressable
+          onPress={handleLogout}
+          style={({ pressed }) => [
+            styles.logoutButton,
+            pressed && styles.pressed,
+          ]}
+        >
+          <Ionicons name="log-out-outline" size={24} color="#FF3B30" style={styles.logoutIcon} />
+          <Text style={styles.logoutText}>Log Out</Text>
+        </Pressable>
       </ScrollView>
     </SafeAreaView>
   );
@@ -218,5 +258,31 @@ const styles = StyleSheet.create({
   },
   pressed: {
     opacity: 0.7,
+  },
+  logoutButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#FFFFFF',
+    marginHorizontal: Spacing.four,
+    marginTop: Spacing.four,
+    marginBottom: Spacing.six,
+    paddingVertical: Spacing.three,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#FFEBEA',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 1,
+  },
+  logoutIcon: {
+    marginRight: Spacing.two,
+  },
+  logoutText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#FF3B30',
   },
 });
